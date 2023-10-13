@@ -31,7 +31,7 @@ export class UsersService {
         id: id,
       },
       include: {
-        class: {
+        classes: {
           select: {
             nameClass: true,
             memberOfClass: true,
