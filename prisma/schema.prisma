@@ -14,10 +14,15 @@ model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id])
 }
 
 model Class {
   id            Int    @id @default(autoincrement())
   nameClass     String @unique
   memberOfClass Int
+
+  users User[]
 }

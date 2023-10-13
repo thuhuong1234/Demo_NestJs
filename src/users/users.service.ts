@@ -30,6 +30,14 @@ export class UsersService {
       where: {
         id: id,
       },
+      include: {
+        class: {
+          select: {
+            nameClass: true,
+            memberOfClass: true,
+          },
+        },
+      },
     });
     if (!user) {
       throw new NotFoundException();

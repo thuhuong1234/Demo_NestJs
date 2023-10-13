@@ -29,6 +29,9 @@ export class ClassesService {
       where: {
         id: id,
       },
+      include: {
+        users: true,
+      },
     });
 
     return result;
