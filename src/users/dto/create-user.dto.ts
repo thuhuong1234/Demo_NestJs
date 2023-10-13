@@ -1,3 +1,4 @@
+import { Class } from '@prisma/client';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
@@ -7,5 +8,6 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   name: string;
-  classId: number;
+
+  classes?: { id: number; nameClass: string; memberOfClass: number }[];
 }

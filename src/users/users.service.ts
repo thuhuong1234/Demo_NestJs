@@ -14,10 +14,23 @@ export class UsersService {
     if (user) {
       throw new NotFoundException();
     }
-
-    return this.prisma.user.create({
-      data,
+    const newClasses = data.classes.map((className) => ({
+      nameClass: className,
+    }));
+   
+    const newUser = await this.prisma.user.create({
+      data: {
+        email: data.email,
+        name: data.name,
+        classes: {
+          create: newClasses,
+        },
+      },
+      include: {
+        classes: true,
+      },
     });
+    return newUser;
   }
 
   async findAll() {
@@ -30,14 +43,7 @@ export class UsersService {
       where: {
         id: id,
       },
-      include: {
-        class: {
-          select: {
-            nameClass: true,
-            memberOfClass: true,
-          },
-        },
-      },
+      
     });
     if (!user) {
       throw new NotFoundException();

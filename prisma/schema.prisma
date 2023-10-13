@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
 
-  classId Int
-  class   Class @relation(fields: [classId], references: [id])
+  classes        Class[]
+  UsersOnClasses UsersOnClasses[]
 }
 
 model Class {
@@ -24,5 +24,15 @@ model Class {
   nameClass     String @unique
   memberOfClass Int
 
-  users User[]
+  users          User[]
+  UsersOnClasses UsersOnClasses[]
+}
+
+model UsersOnClasses {
+  user    User  @relation(fields: [userID], references: [id])
+  userID  Int // relation scalar field (used in the `@relation` attribute above)
+  class   Class @relation(fields: [classID], references: [id])
+  classID Int // relation scalar field (used in the `@relation` attribute above)
+
+  @@id([userID, classID])
 }
