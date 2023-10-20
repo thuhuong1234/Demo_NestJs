@@ -11,18 +11,35 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  name     String?
+  password String
+  createAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @default(now()) @map("update_at")
 
-  classId Int
-  class   Class @relation(fields: [classId], references: [id])
+  classes Class[]
+
+  usersAndClasses UsersAndClasses[]
 }
 
 model Class {
-  id            Int    @id @default(autoincrement())
-  nameClass     String @unique
+  id            Int      @id @default(autoincrement())
+  nameClass     String   @unique
   memberOfClass Int
+  createAt      DateTime @default(now()) @map("create_at")
+  updateAt      DateTime @default(now()) @map("update_at")
 
   users User[]
+
+  usersAndClasses UsersAndClasses[]
+}
+
+model UsersAndClasses {
+  user    User  @relation(fields: [userId], references: [id])
+  userId  Int
+  class   Class @relation(fields: [classId], references: [id])
+  classId Int
+
+  @@id([userId, classId])
 }
