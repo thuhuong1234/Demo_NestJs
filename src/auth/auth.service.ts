@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { SignUpDto } from './dto/signUp.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { SignInDto } from './dto/signIn.dto';
 import { PrismaService } from 'prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -29,17 +29,39 @@ export class AuthService {
         },
       });
 
-      const payload = { userId: newUser.id };
-      console.log(payload);
+      const payload = { userId: user.id };
+
       const accessToken = await this.jwtService.signAsync(payload);
-      console.log(accessToken);
-      return accessToken;
+      return {
+        accessToken,
+      };
+      return newUser;
     } catch (error) {
-      console.log(error);
       if (error.code === 'P2002') {
         if (error.meta.target === 'User_email_key')
           throw new BadRequestException('Email is existed');
       }
     }
+  }
+  async signIn(signInDto: SignInDto) {
+    const { name, password } = signInDto;
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        email: signInDto.email,
+      },
+    });
+    if (!user) {
+      throw new Notification('User not found');
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new BadRequestException('Invalid password');
+    }
+    const payload = { userId: user.id };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+    return {
+      accessToken,
+    };
   }
 }
