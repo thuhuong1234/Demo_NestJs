@@ -8,9 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
 
-// @UseFilters(HttpExceptionFilter)
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -26,7 +24,6 @@ export class AppController {
   }
 
   @Get('/error')
-  @UseFilters(new HttpExceptionFilter())
   async getError() {
     throw new ForbiddenException();
   }
